@@ -1,0 +1,547 @@
+{
+  "updated": "2026-07-26",
+  "canvas": {
+    "w": 1080,
+    "h": 1920,
+    "outerOpacity": 0.35
+  },
+  "platforms": {
+    "tiktok": {
+      "label": "TikTok",
+      "filename": "tiktok_overlay_1080x1920",
+      "safeZone": {
+        "x": 44,
+        "y": 130,
+        "w": 896,
+        "h": 1306
+      },
+      "color": "#FE2C55",
+      "elements": [
+        {
+          "type": "statusbar"
+        },
+        {
+          "type": "icon",
+          "icon": "profile",
+          "x": 1010,
+          "y": 1120,
+          "r": 27.6,
+          "label": "Profile"
+        },
+        {
+          "type": "icon",
+          "icon": "heart",
+          "x": 1010,
+          "y": 1225,
+          "r": 27.6,
+          "label": "Like"
+        },
+        {
+          "type": "icon",
+          "icon": "comment",
+          "x": 1010,
+          "y": 1330,
+          "r": 27.6,
+          "label": "Comment"
+        },
+        {
+          "type": "icon",
+          "icon": "bookmark",
+          "x": 1010,
+          "y": 1435,
+          "r": 27.6,
+          "label": "Bookmark"
+        },
+        {
+          "type": "icon",
+          "icon": "share",
+          "x": 1010,
+          "y": 1540,
+          "r": 27.6,
+          "label": "Share"
+        },
+        {
+          "type": "icon",
+          "icon": "sound",
+          "x": 1010,
+          "y": 1650,
+          "r": 24.0,
+          "label": "Sound"
+        },
+        {
+          "type": "text",
+          "x": 40,
+          "y": 1590,
+          "size": 30,
+          "weight": "normal",
+          "align": "left",
+          "opacity": 0.85,
+          "label": "@username"
+        },
+        {
+          "type": "text",
+          "x": 40,
+          "y": 1660,
+          "size": 30,
+          "weight": "normal",
+          "align": "left",
+          "opacity": 0.85,
+          "label": "Caption text (2 lines)"
+        },
+        {
+          "type": "text",
+          "x": 40,
+          "y": 1728,
+          "size": 30,
+          "weight": "normal",
+          "align": "left",
+          "opacity": 0.85,
+          "label": "Sound name"
+        },
+        {
+          "type": "text",
+          "x": 340,
+          "y": 162,
+          "size": 30,
+          "weight": "normal",
+          "align": "left",
+          "opacity": 0.85,
+          "label": "Following"
+        },
+        {
+          "type": "text",
+          "x": 540,
+          "y": 162,
+          "size": 30,
+          "weight": "normal",
+          "align": "left",
+          "opacity": 0.85,
+          "label": "For You"
+        },
+        {
+          "type": "icon",
+          "icon": "search",
+          "x": 990,
+          "y": 150,
+          "r": 20.4,
+          "label": "Search"
+        }
+      ]
+    },
+    "instagram_reels": {
+      "label": "Instagram Reels",
+      "filename": "instagram_reels_overlay_1080x1920",
+      "safeZones": [
+        {
+          "x": 70,
+          "y": 250,
+          "w": 955,
+          "h": 610
+        },
+        {
+          "x": 70,
+          "y": 860,
+          "w": 817,
+          "h": 640
+        }
+      ],
+      "color": "#E1306C",
+      "elements": [
+        {
+          "type": "pill",
+          "x": 398,
+          "y": 26,
+          "w": 284,
+          "h": 83
+        },
+        {
+          "type": "statusbar",
+          "y": 88,
+          "clockX": 142,
+          "iconsRightX": 938
+        },
+        {
+          "type": "text",
+          "x": 150,
+          "y": 110,
+          "size": 52,
+          "weight": "bold",
+          "align": "left",
+          "label": "+"
+        },
+        {
+          "type": "text",
+          "x": 510,
+          "y": 110,
+          "size": 60,
+          "weight": "bold",
+          "align": "right",
+          "label": "Reels"
+        },
+        {
+          "type": "text",
+          "x": 570,
+          "y": 110,
+          "size": 60,
+          "weight": "normal",
+          "align": "left",
+          "opacity": 0.55,
+          "label": "Friends"
+        },
+        {
+          "type": "icon",
+          "icon": "sliders",
+          "x": 940,
+          "y": 88,
+          "r": 26,
+          "label": ""
+        },
+        {
+          "type": "icon",
+          "icon": "heart",
+          "x": 1001,
+          "y": 1158,
+          "r": 34,
+          "label": "Like"
+        },
+        {
+          "type": "icon",
+          "icon": "comment",
+          "x": 1001,
+          "y": 1351,
+          "r": 34,
+          "label": "Comment"
+        },
+        {
+          "type": "icon",
+          "icon": "paperplane",
+          "x": 1001,
+          "y": 1554,
+          "r": 34,
+          "label": "Share"
+        },
+        {
+          "type": "icon",
+          "icon": "more",
+          "x": 1001,
+          "y": 1740,
+          "r": 22,
+          "label": "More"
+        },
+        {
+          "type": "rect",
+          "x": 967,
+          "y": 1825,
+          "w": 68,
+          "h": 68,
+          "label": "Audio"
+        },
+        {
+          "type": "circle_avatar",
+          "x": 110,
+          "y": 1580,
+          "r": 38
+        },
+        {
+          "type": "text",
+          "x": 170,
+          "y": 1595,
+          "size": 34,
+          "weight": "bold",
+          "align": "left",
+          "label": "username"
+        },
+        {
+          "type": "rect",
+          "x": 430,
+          "y": 1552,
+          "w": 150,
+          "h": 56,
+          "label": "Follow"
+        },
+        {
+          "type": "text",
+          "x": 100,
+          "y": 1690,
+          "size": 30,
+          "weight": "normal",
+          "align": "left",
+          "opacity": 0.9,
+          "label": "Caption text goes here..."
+        },
+        {
+          "type": "text",
+          "x": 100,
+          "y": 1750,
+          "size": 28,
+          "weight": "normal",
+          "align": "left",
+          "opacity": 0.75,
+          "label": "Original audio"
+        },
+        {
+          "type": "pill",
+          "x": 390,
+          "y": 1879,
+          "w": 300,
+          "h": 11
+        }
+      ]
+    },
+    "youtube_shorts": {
+      "label": "YouTube Shorts",
+      "filename": "youtube_shorts_overlay_1080x1920",
+      "safeZone": {
+        "x": 60,
+        "y": 380,
+        "w": 900,
+        "h": 1160
+      },
+      "color": "#FF0000",
+      "elements": [
+        {
+          "type": "statusbar"
+        },
+        {
+          "type": "icon",
+          "icon": "thumbup",
+          "x": 1010,
+          "y": 1080,
+          "r": 27.6,
+          "label": "Like"
+        },
+        {
+          "type": "icon",
+          "icon": "thumbdown",
+          "x": 1010,
+          "y": 1185,
+          "r": 27.6,
+          "label": "Dislike"
+        },
+        {
+          "type": "icon",
+          "icon": "comment",
+          "x": 1010,
+          "y": 1290,
+          "r": 27.6,
+          "label": "Comments"
+        },
+        {
+          "type": "icon",
+          "icon": "share",
+          "x": 1010,
+          "y": 1395,
+          "r": 27.6,
+          "label": "Share"
+        },
+        {
+          "type": "icon",
+          "icon": "remix",
+          "x": 1010,
+          "y": 1500,
+          "r": 27.6,
+          "label": "Remix"
+        },
+        {
+          "type": "icon",
+          "icon": "profile",
+          "x": 70,
+          "y": 1590,
+          "r": 18.0,
+          "label": "Avatar"
+        },
+        {
+          "type": "text",
+          "x": 120,
+          "y": 1590,
+          "size": 30,
+          "weight": "normal",
+          "align": "left",
+          "opacity": 0.85,
+          "label": "@channel"
+        },
+        {
+          "type": "rect",
+          "x": 650,
+          "y": 1555,
+          "w": 170,
+          "h": 56,
+          "label": "Subscribe"
+        },
+        {
+          "type": "text",
+          "x": 40,
+          "y": 1670,
+          "size": 30,
+          "weight": "normal",
+          "align": "left",
+          "opacity": 0.85,
+          "label": "Video title (2 lines)"
+        },
+        {
+          "type": "text",
+          "x": 40,
+          "y": 162,
+          "size": 30,
+          "weight": "normal",
+          "align": "left",
+          "opacity": 0.85,
+          "label": "Shorts"
+        }
+      ]
+    },
+    "vk_clips": {
+      "label": "VK Clips",
+      "filename": "vk_clips_overlay_1080x1920",
+      "safeZone": {
+        "x": 60,
+        "y": 150,
+        "w": 960,
+        "h": 1450
+      },
+      "color": "#0077FF",
+      "elementsVerified": false,
+      "elements": [
+        {
+          "type": "statusbar"
+        },
+        {
+          "type": "text",
+          "x": 40,
+          "y": 1675,
+          "size": 30,
+          "weight": "normal",
+          "align": "left",
+          "opacity": 0.85,
+          "label": "Caption / UI zone (approximate)"
+        },
+        {
+          "type": "icon",
+          "icon": "heart",
+          "x": 970,
+          "y": 1200,
+          "r": 27.6,
+          "label": "Icon (approximate)"
+        },
+        {
+          "type": "icon",
+          "icon": "comment",
+          "x": 970,
+          "y": 1310,
+          "r": 27.6,
+          "label": "Icon (approximate)"
+        },
+        {
+          "type": "icon",
+          "icon": "share",
+          "x": 970,
+          "y": 1420,
+          "r": 27.6,
+          "label": "Icon (approximate)"
+        }
+      ]
+    },
+    "likee": {
+      "label": "Likee",
+      "filename": "likee_overlay_1080x1920",
+      "safeZone": {
+        "x": 60,
+        "y": 150,
+        "w": 960,
+        "h": 1450
+      },
+      "color": "#FFC900",
+      "elementsVerified": false,
+      "elements": [
+        {
+          "type": "statusbar"
+        },
+        {
+          "type": "text",
+          "x": 40,
+          "y": 1675,
+          "size": 30,
+          "weight": "normal",
+          "align": "left",
+          "opacity": 0.85,
+          "label": "Caption / UI zone (approximate)"
+        },
+        {
+          "type": "icon",
+          "icon": "heart",
+          "x": 970,
+          "y": 1200,
+          "r": 27.6,
+          "label": "Icon (approximate)"
+        },
+        {
+          "type": "icon",
+          "icon": "comment",
+          "x": 970,
+          "y": 1310,
+          "r": 27.6,
+          "label": "Icon (approximate)"
+        },
+        {
+          "type": "icon",
+          "icon": "share",
+          "x": 970,
+          "y": 1420,
+          "r": 27.6,
+          "label": "Icon (approximate)"
+        }
+      ]
+    },
+    "facebook_reels": {
+      "label": "Facebook Reels",
+      "filename": "facebook_reels_overlay_1080x1920",
+      "safeZone": {
+        "x": 0,
+        "y": 210,
+        "w": 996,
+        "h": 1400
+      },
+      "color": "#0866FF",
+      "elementsVerified": false,
+      "elements": [
+        {
+          "type": "statusbar"
+        },
+        {
+          "type": "text",
+          "x": 40,
+          "y": 1675,
+          "size": 30,
+          "weight": "normal",
+          "align": "left",
+          "opacity": 0.85,
+          "label": "Caption / UI zone (approximate)"
+        },
+        {
+          "type": "icon",
+          "icon": "heart",
+          "x": 970,
+          "y": 1150,
+          "r": 27.6,
+          "label": "Icon (approximate)"
+        },
+        {
+          "type": "icon",
+          "icon": "comment",
+          "x": 970,
+          "y": 1260,
+          "r": 27.6,
+          "label": "Icon (approximate)"
+        },
+        {
+          "type": "icon",
+          "icon": "share",
+          "x": 970,
+          "y": 1370,
+          "r": 27.6,
+          "label": "Icon (approximate)"
+        }
+      ]
+    }
+  }
+}

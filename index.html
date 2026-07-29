@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #2a2a2a;
+      color: #e0e0e0;
+      margin: 0;
+      padding: 12px;
+    }
+    h2 {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 0 0 12px 0;
+      color: #fff;
+    }
+    .zone-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      background: #3a3a3a;
+      border: 1px solid #4a4a4a;
+      border-radius: 4px;
+      color: #e0e0e0;
+      font-size: 12px;
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+    .zone-btn:hover { background: #454545; }
+    .zone-btn.active {
+      border-color: #7cc4ff;
+      background: #33465c;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 8px;
+    }
+    .row { display: flex; align-items: center; }
+    .divider {
+      border-top: 1px solid #4a4a4a;
+      margin: 12px 0;
+    }
+    .remove-btn {
+      width: 100%;
+      padding: 8px;
+      background: #5c2a2a;
+      border: 1px solid #7a3838;
+      border-radius: 4px;
+      color: #ffdada;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .remove-btn:hover { background: #6e3232; }
+    .status {
+      margin-top: 10px;
+      font-size: 11px;
+      color: #999;
+      min-height: 14px;
+    }
+    .meta {
+      font-size: 10px;
+      color: #777;
+      margin-top: 14px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h2>SAFE ZONE PRO</h2>
+  <div id="zoneButtons"></div>
+
+  <div class="divider"></div>
+  <button class="remove-btn" id="removeAll">Remove all zones from timeline</button>
+
+  <div class="status" id="status"></div>
+  <div class="meta" id="meta"></div>
+
+  <script src="index.js"></script>
+</body>
+</html>
