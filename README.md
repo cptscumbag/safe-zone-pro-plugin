@@ -1,10 +1,14 @@
 # Safe Zone Pro
 
-Premiere Pro plugin: one click adds a safe-zone overlay to the timeline
-for the selected platform (TikTok / Instagram Reels / YouTube Shorts /
-VK Clips / Likee / Facebook Reels), stretched to the full sequence length
-and placed on a dedicated video track. "Remove all zones" clears
-everything — the timeline clip and the project bin item.
+Premiere Pro plugin: one click drops a hazard-tape safe-zone overlay onto
+the timeline, stretched to the full sequence length and placed on a
+dedicated video track. "Remove zone" clears everything — the timeline
+clip and the project bin item.
+
+A single universal overlay covers every vertical platform (TikTok,
+Instagram Reels, YouTube Shorts, VK Clips, Likee, Facebook Reels): their
+safe areas differ by only a few dozen pixels, so the overlay uses the
+tightest of them (Instagram Reels) and clears the rest by construction.
 
 ## How to run and test
 
@@ -15,7 +19,7 @@ everything — the timeline clip and the project bin item.
 3. In UDT: Add Plugin → select `manifest.json` from this folder → Load
    (or Load & Watch for auto-reload on code changes).
 4. In Premiere: Window → UXP Extensions → Safe Zone Pro.
-5. Open a project with an active sequence and click a platform button.
+5. Open a project with an active sequence and click the SAFE ZONE button.
 
 ## Confirmed working API (verified through live debugging on Premiere 26.3.0)
 
@@ -46,33 +50,49 @@ everything — the timeline clip and the project bin item.
   this by reusing an empty top track on the next insert instead of
   creating a new one every time
 
-## Updating overlays / adding platforms
+## Updating the overlay
 
-Edit `zones-config.json` (safe zone coordinates, UI element positions,
-colors, filenames), then regenerate:
+Edit `zones-config.json` (zone coordinates and tape style), check it, then
+regenerate:
 
 ```
+node validate-zones.js
 node generate-overlays.js
 python3 svg-to-png.py
 ```
 
 Requires `pip install cairosvg --break-system-packages`.
 
-Note: exact UI element coordinates for TikTok, Instagram Reels and
-YouTube Shorts were placed from memory of typical layouts, not pixel-
-perfect published specs — verify against a real exported video before
-relying on them. VK Clips, Likee and Facebook Reels currently only have
-a generic safe-zone box (`elementsVerified: false` in the config) since
-their UI layouts weren't confidently known — calibrate against real
-screenshots before shipping.
+`validate-zones.js` renders nothing — it checks the zone geometry and
+reports how much margin survives the horizontal crop on real devices, so
+zone tweaks don't need a visual round-trip.
+
+### Why the zone is L-shaped
+
+Players cover-fit the 1080×1920 canvas, so a screen narrower than 9:16
+gets cropped horizontally:
+
+```
+crop_per_side = (1080 - 1920 × screenAR) / 2
+```
+
+Measured against real screenshots: 48px/side on a full-bleed iPhone,
+28px/side on Android; worst case for a full-bleed 20:9 screen is 108px.
+Because the UI icons are pinned to the *physical screen edge*, they
+intrude further into canvas coordinates the more the canvas is cropped —
+hence a flat 110px horizontal margin everywhere. Below y=1100 the right
+margin grows to 220px to also clear the like/comment/share column, which
+is what produces the L.
+
+Vertical bounds come from the same screenshots: the Reels header ends at
+canvas y≈240 (top margin 260) and the username/caption block starts at
+y≈1749 (bottom margin 300).
 
 ## Licensing (sketch for a paid version)
 
 Standard approach used by most small Premiere plugins (MassRename,
 AutoSortBinsPro, etc.):
 
-- **Free tier**: only one platform available, others shown as "🔒 Pro"
-  in the UI
 - **No-server key activation**: pre-generate keys (e.g. HMAC signature
   of email+seed), validate the checksum locally in the plugin — no
   backend needed for an MVP. Downside: a key can be copied across

@@ -16,49 +16,87 @@
       margin: 0 0 12px 0;
       color: #fff;
     }
-    .zone-btn {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    /* Hazard-tape button, matching the overlay it inserts.
+       Built from plain divs with solid colours on purpose: UXP does not
+       support ::before/::after or repeating-linear-gradient, and a native
+       <button> forces its own grey background and white text. */
+    .tape-btn {
+      position: relative;
       width: 100%;
-      padding: 8px 10px;
-      margin-bottom: 6px;
-      background: #3a3a3a;
-      border: 1px solid #4a4a4a;
-      border-radius: 4px;
-      color: #e0e0e0;
-      font-size: 12px;
+      height: 96px;
+      background-color: #F5C400;
+      border: 2px solid transparent;
+      border-radius: 3px;
+      overflow: hidden;
       cursor: pointer;
       box-sizing: border-box;
     }
-    .zone-btn:hover { background: #454545; }
-    .zone-btn.active {
-      border-color: #7cc4ff;
-      background: #33465c;
+    .tape-btn:hover { background-color: #FFD41F; }
+    .tape-btn.active { border-color: #7cc4ff; }
+    .tape-band {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 24px;
+      overflow: hidden;
     }
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 8px;
+    .tape-band-top { top: 0; }
+    .tape-band-bottom { bottom: 0; }
+    /* The tape is a PNG, not CSS. UXP silently ignores every CSS transform
+       (rotate and skewX at any sign all come out as vertical bars) and has no
+       repeating-linear-gradient, so a diagonal is not drawable in CSS here.
+       Regenerate the asset with `node make-tape-png.js`.
+       One image spans the whole button: the top band shows its rows 0..24 and
+       the bottom band shows rows 72..96, so the diagonals stay continuous. */
+    .tape-img {
+      position: absolute;
+      left: 0;
+      width: 1000px;
+      height: 96px;
     }
-    .row { display: flex; align-items: center; }
+    .tape-band-top .tape-img { top: 0; }
+    .tape-band-bottom .tape-img { top: -72px; }
+    .tape-text {
+      position: absolute;
+      top: 24px;
+      left: 0;
+      right: 0;
+      height: 48px;
+      /* Larger than the box on purpose: all-caps text has no descenders, so a
+         line box centred on the baseline sits optically high. Solved from the
+         font's real ink metrics so the cap height lands exactly halfway
+         between the two bands — re-measure if the font ever changes. */
+      line-height: 44px;
+      text-align: center;
+      /* Helvetica Neue's heavy cuts are macOS-only; Windows falls through to
+         Impact, which is also condensed and heavy so the two look alike.
+         Plain "Helvetica Neue" is deliberately NOT in the stack — it would
+         match on macOS and resolve to Bold, which is far too light. */
+      font-family: "HelveticaNeue-CondensedBlack", "Helvetica Neue Black",
+                   Impact, "Arial Black", sans-serif;
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #111111;
+    }
     .divider {
       border-top: 1px solid #4a4a4a;
       margin: 12px 0;
     }
+    /* Also a div, for the same UXP reason as .tape-btn. */
     .remove-btn {
       width: 100%;
-      padding: 8px;
-      background: #5c2a2a;
+      padding: 8px 0;
+      text-align: center;
+      background-color: #5c2a2a;
       border: 1px solid #7a3838;
       border-radius: 4px;
       color: #ffdada;
       font-size: 12px;
       cursor: pointer;
+      box-sizing: border-box;
     }
-    .remove-btn:hover { background: #6e3232; }
+    .remove-btn:hover { background-color: #6e3232; }
     .status {
       margin-top: 10px;
       font-size: 11px;
@@ -75,10 +113,15 @@
 </head>
 <body>
   <h2>SAFE ZONE PRO</h2>
-  <div id="zoneButtons"></div>
+
+  <div class="tape-btn" id="addZone">
+    <div class="tape-band tape-band-top"><img class="tape-img" src="ui/tape-band.png"></div>
+    <div class="tape-text">SAFE ZONE</div>
+    <div class="tape-band tape-band-bottom"><img class="tape-img" src="ui/tape-band.png"></div>
+  </div>
 
   <div class="divider"></div>
-  <button class="remove-btn" id="removeAll">Remove all zones from timeline</button>
+  <div class="remove-btn" id="removeAll">Remove zone from timeline</div>
 
   <div class="status" id="status"></div>
   <div class="meta" id="meta"></div>

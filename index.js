@@ -85,32 +85,14 @@ async function loadConfig() {
     `Zones updated: ${config.updated}`;
 }
 
-function renderButtons() {
-  const container = document.getElementById("zoneButtons");
-  container.innerHTML = "";
-
-  Object.entries(config.platforms).forEach(([key, platform]) => {
-    const btn = document.createElement("div");
-    btn.className = "zone-btn";
-    btn.id = `btn_${key}`;
-    btn.innerHTML = `
-      <span class="row">
-        <span class="dot" style="background:${platform.color}"></span>
-        ${platform.label}
-      </span>
-      <span>+</span>
-    `;
-    btn.addEventListener("click", () => addSafeZone(key, platform));
-    container.appendChild(btn);
-  });
-}
-
 function setStatus(text) {
   document.getElementById("status").textContent = text;
 }
 
-async function addSafeZone(platformKey, platform) {
-  setStatus(`Adding ${platform.label}...`);
+
+async function addSafeZone() {
+  const overlay = config.overlay;
+  setStatus(`Adding ${overlay.label}...`);
 
   try {
     const project = await premierepro.Project.getActiveProject();
@@ -127,7 +109,7 @@ async function addSafeZone(platformKey, platform) {
     console.log("STEP -1 OK: active sequence name =", sequence.name);
 
     // Decide: already present -> stop; anything else present -> replace it.
-    const targetName = `${PREFIX}${platformKey}`;
+    const targetName = `${PREFIX}OVERLAY`;
     const existingTrackCount = await sequence.getVideoTrackCount();
     let sameZoneExists = false;
     let anyZoneExists = false;
@@ -159,8 +141,8 @@ async function addSafeZone(platformKey, platform) {
       if (orphansRemoved > 0) {
         console.log("STEP -0.4: purged orphaned bin items:", orphansRemoved);
       }
-      setStatus(`${platform.label} is already on the timeline.`);
-      markActive(platformKey);
+      setStatus(`${overlay.label} is already on the timeline.`);
+      markActive();
       return;
     }
 
@@ -174,7 +156,7 @@ async function addSafeZone(platformKey, platform) {
     // 1. import the PNG overlay as a project media file
     const pluginFolder = await fs.getPluginFolder();
     const overlayEntry = await pluginFolder.getEntry(
-      `overlays/${platform.filename}.png`
+      `overlays/${overlay.filename}.png`
     );
     const overlayPath = overlayEntry.nativePath;
     console.log("STEP 0 OK: overlayPath =", overlayPath);
@@ -211,7 +193,7 @@ async function addSafeZone(platformKey, platform) {
     );
 
     const projectItem = binItems.find((item) =>
-      item.name.startsWith(platform.filename)
+      item.name.startsWith(overlay.filename)
     );
     if (!projectItem) {
       setStatus("Imported, but couldn't find the clip in the bin. Check console.");
@@ -222,9 +204,7 @@ async function addSafeZone(platformKey, platform) {
     // Rename — both createSetNameAction and executeTransaction must be
     // called inside lockedAccess (not just execute, but create too)
     project.lockedAccess(() => {
-      const renameAction = projectItem.createSetNameAction(
-        `${PREFIX}${platformKey}`
-      );
+      const renameAction = projectItem.createSetNameAction(targetName);
       project.executeTransaction((compoundAction) => {
         compoundAction.addAction(renameAction);
       }, "Rename safe zone clip");
@@ -309,8 +289,8 @@ async function addSafeZone(platformKey, platform) {
     console.log("STEP 8: computed maxEndSeconds =", maxEndSeconds);
 
     if (maxEndSeconds <= 0) {
-      setStatus(`${platform.label} added (empty sequence, not stretching).`);
-      markActive(platformKey);
+      setStatus(`${overlay.label} added (empty sequence, not stretching).`);
+      markActive();
       return;
     }
 
@@ -326,23 +306,20 @@ async function addSafeZone(platformKey, platform) {
     });
     console.log("STEP 9 OK: stretched to", maxEndSeconds, "seconds");
 
-    markActive(platformKey);
-    setStatus(`${platform.label} added to timeline.`);
+    markActive();
+    setStatus(`${overlay.label} added to timeline.`);
   } catch (err) {
     console.error(err);
     setStatus(`Error: ${err.message || err}`);
   }
 }
 
-function markActive(platformKey) {
-  const btn = document.getElementById(`btn_${platformKey}`);
-  if (btn) btn.classList.add("active");
+function markActive() {
+  document.getElementById("addZone").classList.add("active");
 }
 
 function clearActiveStates() {
-  document
-    .querySelectorAll(".zone-btn.active")
-    .forEach((el) => el.classList.remove("active"));
+  document.getElementById("addZone").classList.remove("active");
 }
 
 async function removeAllSafeZoneClips(project, sequence, editor) {
@@ -411,7 +388,7 @@ async function removeAllSafeZoneClips(project, sequence, editor) {
 }
 
 async function removeAllSafeZones() {
-  setStatus("Removing all zones...");
+  setStatus("Removing zone...");
 
   try {
     const project = await premierepro.Project.getActiveProject();
@@ -431,8 +408,8 @@ async function removeAllSafeZones() {
     clearActiveStates();
     setStatus(
       removedCount > 0
-        ? `Zones removed: ${removedCount}.`
-        : "No active zones found on the timeline."
+        ? `Zone removed.`
+        : "No active zone found on the timeline."
     );
   } catch (err) {
     console.error(err);
@@ -440,13 +417,12 @@ async function removeAllSafeZones() {
   }
 }
 
+document.getElementById("addZone").addEventListener("click", addSafeZone);
 document
   .getElementById("removeAll")
   .addEventListener("click", removeAllSafeZones);
 
-loadConfig()
-  .then(renderButtons)
-  .catch((err) => {
-    console.error(err);
-    setStatus("Failed to load zones config.");
-  });
+loadConfig().catch((err) => {
+  console.error(err);
+  setStatus("Failed to load zones config.");
+});
