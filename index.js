@@ -23,6 +23,59 @@ const PREFIX = "SAFE_ZONE_"; // used to find and remove clips created by this pl
 
 let config = null;
 
+// getActiveSequence() occasionally returns null right after an edit commits
+// (Premiere hasn't settled yet) — poll with a short delay before giving up.
+async function getActiveSequenceWithRetry(project, attempts = 4, delayMs = 150) {
+  for (let i = 0; i < attempts; i++) {
+    const sequence = await project.getActiveSequence();
+    if (sequence) return sequence;
+    if (i < attempts - 1) {
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+  }
+  return null;
+}
+
+// Bin items with our prefix that have no matching clip left on the
+// timeline (e.g. a previous run's cleanup was interrupted). Removes only
+// those, leaving the currently-active zone's clip untouched.
+async function removeOrphanBinItems(project, sequence) {
+  const trackCount = await sequence.getVideoTrackCount();
+  const timelineNames = new Set();
+  for (let i = 0; i < trackCount; i++) {
+    const track = await sequence.getVideoTrack(i);
+    const items = await track.getTrackItems(
+      premierepro.Constants.TrackItemType.CLIP,
+      false
+    );
+    for (const item of items) {
+      const name = await item.getName();
+      if (name) timelineNames.add(name);
+    }
+  }
+
+  const insertionBinRaw = await project.getInsertionBin();
+  const insertionBin = await premierepro.FolderItem.cast(insertionBinRaw);
+  const binItems = await insertionBin.getItems();
+  const orphans = binItems.filter(
+    (item) =>
+      item.name && item.name.startsWith(PREFIX) && !timelineNames.has(item.name)
+  );
+
+  if (orphans.length === 0) return 0;
+
+  project.lockedAccess(() => {
+    project.executeTransaction((compoundAction) => {
+      orphans.forEach((item) => {
+        const removeFromBinAction = insertionBin.createRemoveItemAction(item);
+        compoundAction.addAction(removeFromBinAction);
+      });
+    }, "Remove orphaned safe zone project items");
+  });
+
+  return orphans.length;
+}
+
 async function loadConfig() {
   const pluginFolder = await fs.getPluginFolder();
   const configFile = await pluginFolder.getEntry("zones-config.json");
@@ -66,7 +119,7 @@ async function addSafeZone(platformKey, platform) {
       return;
     }
 
-    const sequence = await project.getActiveSequence();
+    const sequence = await getActiveSequenceWithRetry(project);
     if (!sequence) {
       setStatus("No active sequence. Open a timeline first.");
       return;
@@ -102,6 +155,10 @@ async function addSafeZone(platformKey, platform) {
 
     if (sameZoneExists) {
       console.log("STEP -0.5: same zone already present, skipping insert");
+      const orphansRemoved = await removeOrphanBinItems(project, sequence);
+      if (orphansRemoved > 0) {
+        console.log("STEP -0.4: purged orphaned bin items:", orphansRemoved);
+      }
       setStatus(`${platform.label} is already on the timeline.`);
       markActive(platformKey);
       return;
@@ -362,12 +419,7 @@ async function removeAllSafeZones() {
       setStatus("No open project.");
       return;
     }
-    let sequence = await project.getActiveSequence();
-    if (!sequence) {
-      // getActiveSequence() occasionally returns null right after an edit —
-      // retry once before giving up.
-      sequence = await project.getActiveSequence();
-    }
+    const sequence = await getActiveSequenceWithRetry(project);
     if (!sequence) {
       setStatus("No active sequence. Click the timeline, then try again.");
       return;
