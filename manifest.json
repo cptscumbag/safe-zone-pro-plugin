@@ -1,6 +1,6 @@
 {
   "manifestVersion": 5,
-  "id": "com.yourstudio.safezonepro",
+  "id": "io.github.cptscumbag.safezonepro",
   "name": "Safe Zone Pro",
   "version": "1.0.0",
   "main": "index.html",
