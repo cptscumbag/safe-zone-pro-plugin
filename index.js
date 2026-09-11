@@ -76,6 +76,52 @@ async function removeOrphanBinItems(project, sequence) {
   return orphans.length;
 }
 
+// Width/height from the PNG IHDR chunk (bytes 16..23, big-endian).
+async function readPngSize(entry) {
+  const buffer = await entry.read({ format: require("uxp").storage.formats.binary });
+  const view = new DataView(buffer);
+  return { width: view.getUint32(16), height: view.getUint32(20) };
+}
+
+// The overlay is rendered at 4K; Premiere places stills at 100%, so in a
+// smaller sequence only the centre is visible. Emulate "Fit to Frame" by
+// setting Motion > Scale to the ratio that fits the image into the frame.
+async function fitClipToFrame(project, sequence, trackItem, imageSize) {
+  const frame = await sequence.getFrameSize();
+  const scale =
+    Math.min(frame.width / imageSize.width, frame.height / imageSize.height) * 100;
+  console.log("FIT: frame =", frame.width, "x", frame.height, "scale =", scale);
+
+  const chain = await trackItem.getComponentChain();
+  const componentCount = await chain.getComponentCount();
+  let scaleParam = null;
+  for (let i = 0; i < componentCount && !scaleParam; i++) {
+    const component = await chain.getComponentAtIndex(i);
+    const matchName = await component.getMatchName();
+    if (matchName !== "AE.ADBE Motion") continue;
+    const paramCount = await component.getParamCount();
+    for (let j = 0; j < paramCount; j++) {
+      const param = await component.getParam(j);
+      if (param.displayName === "Scale") {
+        scaleParam = param;
+        break;
+      }
+    }
+    // Localized UIs: Scale is the second Motion param (after Position).
+    if (!scaleParam && paramCount > 1) scaleParam = await component.getParam(1);
+  }
+  if (!scaleParam) throw new Error("Motion > Scale parameter not found");
+
+  project.lockedAccess(() => {
+    const keyframe = scaleParam.createKeyframe(scale);
+    const setScaleAction = scaleParam.createSetValueAction(keyframe, true);
+    project.executeTransaction((compoundAction) => {
+      compoundAction.addAction(setScaleAction);
+    }, "Fit safe zone to frame");
+  });
+  return scale;
+}
+
 async function loadConfig() {
   const pluginFolder = await fs.getPluginFolder();
   const configFile = await pluginFolder.getEntry("zones-config.json");
@@ -265,6 +311,16 @@ async function addSafeZone() {
     if (!insertedItem) {
       setStatus("Clip inserted, but couldn't find it to stretch its length.");
       return;
+    }
+
+    // Fit to frame — non-fatal: if it fails the overlay is still on the
+    // timeline, the user can apply Set to Frame Size manually.
+    try {
+      const imageSize = await readPngSize(overlayEntry);
+      const scale = await fitClipToFrame(project, sequence, insertedItem, imageSize);
+      console.log("STEP 7b OK: fitted to frame, scale =", scale);
+    } catch (fitErr) {
+      console.error("STEP 7b FAILED: fit to frame", fitErr);
     }
 
     // sequence.getOutPoint() is the work area, not the sequence length —
